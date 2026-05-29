@@ -4,19 +4,27 @@ from typing import TYPE_CHECKING
 
 from BaseClasses import CollectionState
 from worlds.generic.Rules import add_rule, set_rule
-from ..stardew_valley.stardew_rule import true_
 
 if TYPE_CHECKING:
     from .world import DoorSalesmanWorld
 
 
 repairs_to = {
+    "Scratched Door": "Plain Door",
     "Cracked Oak Door": "Oak Door",
-    "Oak Door": "",
-    "Gold Oak Door": "",
+    "Hole Oak Door": "Oak Door",
+    "Ripped Screen Door": "Screen Door",
+    "Fractured Ewhs Door": "Ewhs Door",
+    "Rough Blue Door": "Blue Door",
+    "Fractured Glass Door": "Glass Door",
+    "Cracked Mansion Door": "Mansion Door",
+    "Wheelless Steel Door": "Steel Door",
+    "Melted Door": "Ice Door",
 }
 repair_requirements = {
-    "Cracked Oak Door": []
+    "Fractured Ewhs Door": ["Glassworking"],
+    "Fractured Glass Door": ["Glassworking"],
+    "Melted Door": ["Freezer"],
 }
 
 
@@ -27,7 +35,7 @@ def has_door(door: str, state: CollectionState, world: DoorSalesmanWorld) -> boo
     for i in repairs_to:
         if repairs_to[i] == door:
             if repair_requirements.__contains__(i):
-                if state.has_all([i] + repair_requirements[i]):
+                if state.has_all([i] + repair_requirements[i], world.player):
                     return True
             else:
                 if state.has(i, world.player):
@@ -48,43 +56,12 @@ def set_all_rules(world: DoorSalesmanWorld) -> None:
 
 
 def set_all_entrance_rules(world: DoorSalesmanWorld) -> None:
-    # First, we need to actually grab our entrances. Luckily, there is a helper method for this.
-    overworld_to_bottom_right_room = world.get_entrance("Overworld to Bottom Right Room")
-    overworld_to_top_left_room = world.get_entrance("Overworld to Top Left Room")
-    right_room_to_final_boss_room = world.get_entrance("Right Room to Final Boss Room")
-
-    # An access rule is a function. We can define this function like any other function.
-    # This function must accept exactly one parameter: A "CollectionState".
-    # A CollectionState describes the current progress of the players in the multiworld, i.e. what items they have,
-    # which regions they've reached, etc.
-    # In an access rule, we can ask whether the player has a collected a certain item.
-    # We can do this via the state.has(...) function.
-    # This function takes an item name, a player number, and an optional count parameter (more on that below)
-    # Since a rule only takes a CollectionState parameter, but we also need the player number in the state.has call,
-    # our function needs to be locally defined so that it has access to the player number from the outer scope.
-    # In our case, we are inside a function that has access to the "world" parameter, so we can use world.player.
-    def can_destroy_bush(state: CollectionState) -> bool:
-        return state.has("Sword", world.player)
-
-    # Now we can set our "can_destroy_bush" rule to our entrance which requires slashing a bush to clear the path.
-    # One way to set rules is via the set_rule() function, which works on both Entrances and Locations.
-    set_rule(overworld_to_bottom_right_room, can_destroy_bush)
-
-    # Because the function has to be defined locally, most worlds prefer the lambda syntax.
-    set_rule(overworld_to_top_left_room, lambda state: state.has("Key", world.player))
-
-    # Conditions can depend on event items.
-    set_rule(right_room_to_final_boss_room, lambda state: state.has("Top Left Room Button Pressed", world.player))
-
-    # Some entrance rules may only apply if the player enabled certain options.
-    # In our case, if the hammer option is enabled, we need to add the Hammer requirement to the Entrance from
-    # Overworld to the Top Middle Room.
-    if world.options.hammer:
-        overworld_to_top_middle_room = world.get_entrance("Overworld to Top Middle Room")
-        set_rule(overworld_to_top_middle_room, lambda state: state.has("Hammer", world.player))
+   pass
 
 
 def set_all_location_rules(world: DoorSalesmanWorld) -> None:
+
+
     # Location rules work no differently from Entrance rules.
     # Most of our locations are chests that can simply be opened by walking up to them.
     # Thus, their logical requirements are covered by the Entrance rules of the Entrances that were required to

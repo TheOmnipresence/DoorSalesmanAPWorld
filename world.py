@@ -24,7 +24,7 @@ from . import options as apquest_options  # rename due to a name conflict with W
 # It is recommended that you read these in that specific order, then come back to the world class.
 class DoorSalesmanWorld(World):
     """
-    Door to Door Door salesman is an economy-based business rougelite about selling people doors.
+    Door to Door Door Salesman is an economy-based business rougelite about selling people doors.
     """
 
     # The docstring should contain a description of the game, to be displayed on the WebHost.

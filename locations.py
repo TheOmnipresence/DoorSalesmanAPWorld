@@ -75,10 +75,10 @@ def create_regular_locations(world: DoorSalesmanWorld) -> None:
         region = world.get_region(i.split(" shop item ")[0])
         region.locations.append(DoorSalesmanLocation(world.player, i, LOCATION_NAME_TO_ID[i], region))
 
-    world.get_region("Shrimpville").add_locations(get_location_names_with_ids(["May", "Doug", "Mr Brown", "Liliana", "Ice Man"] + ["Coldington neighborhood unlock"]))
-    world.get_region("Fancytown").add_locations(get_location_names_with_ids(["Poshman", "Hole Guy", "Gold"] + ["Mansion Lane neighborhood unlock"]))
-    world.get_region("Mansion Lane").add_locations(get_location_names_with_ids(["John Bottom", "John Top"]))
-    world.get_region("Coldington").add_locations(get_location_names_with_ids(["Dr Lebut"]))
+    world.get_region("Shrimpville").add_locations(get_location_names_with_ids(["May Old Door", "Doug Old Door", "Mr Brown Old Door", "Liliana Old Door", "Ice Man Old Door"] + ["Coldington neighborhood unlock"]))
+    world.get_region("Fancytown").add_locations(get_location_names_with_ids(["Poshman Old Door", "Hole Guy Old Door", "Gold Old Door"] + ["Mansion Lane neighborhood unlock"]))
+    world.get_region("Mansion Lane").add_locations(get_location_names_with_ids(["John Bottom Old Door", "John Top Old Door"]))
+    world.get_region("Coldington").add_locations(get_location_names_with_ids(["Dr Lebut Old Door"]))
     # Industrial zone
 
     # Locations may exist only if the player enables certain options.
