@@ -17,7 +17,7 @@ def map_to_dict(array: list, method: Callable) -> dict:
     return result
 
 
-NORMAL_LOCATIONS = [
+SHOP_LOCATIONS = [
     "Warehouse shop item 1",
     "Warehouse shop item 2",
     "Warehouse shop item 3",
@@ -29,12 +29,30 @@ NORMAL_LOCATIONS = [
     "Mansion Lane shop item 1",
     "Mansion Lane shop item 2",
     "Mansion Lane shop item 3",
+    #coldington
     "Industrial Zone shop item 1",
     "Industrial Zone shop item 2",
     "Industrial Zone shop item 3",
 ]
+OLD_DOORS = [
+    "May Old Door",
+    "Doug Old Door",
+    "Mr Brown Old Door",
+    "Liliana Old Door",
+    "Ice Man Old Door",
+    "Poshman Old Door",
+    "Hole Guy Old Door",
+    "Gold Old Door",
+    "John Bottom Old Door",
+    "John Top Old Door",
+    "Dr Lebut Old Door",
+]
+NEIGHBORHOOD_UNLOCKS = [
+    "Mansion Lane neighborhood unlock",
+    "Coldington neighborhood unlock",
+]
 
-LOCATION_NAME_TO_ID = map_to_dict(NORMAL_LOCATIONS, lambda e: NORMAL_LOCATIONS.index(e))
+LOCATION_NAME_TO_ID = map_to_dict(SHOP_LOCATIONS, lambda e: SHOP_LOCATIONS.index(e)) | map_to_dict(OLD_DOORS, lambda e: OLD_DOORS.index(e) + 1000) | map_to_dict(NEIGHBORHOOD_UNLOCKS, lambda e: NEIGHBORHOOD_UNLOCKS.index(e) + 2000)
 
 
 # Each Location instance must correctly report the "game" it belongs to.
@@ -53,10 +71,15 @@ def create_all_locations(world: DoorSalesmanWorld) -> None:
 
 
 def create_regular_locations(world: DoorSalesmanWorld) -> None:
-    for i in NORMAL_LOCATIONS:
+    for i in SHOP_LOCATIONS:
         region = world.get_region(i.split(" shop item ")[0])
         region.locations.append(DoorSalesmanLocation(world.player, i, LOCATION_NAME_TO_ID[i], region))
 
+    world.get_region("Shrimpville").add_locations(get_location_names_with_ids(["May", "Doug", "Mr Brown", "Liliana", "Ice Man"] + ["Coldington neighborhood unlock"]))
+    world.get_region("Fancytown").add_locations(get_location_names_with_ids(["Poshman", "Hole Guy", "Gold"] + ["Mansion Lane neighborhood unlock"]))
+    world.get_region("Mansion Lane").add_locations(get_location_names_with_ids(["John Bottom", "John Top"]))
+    world.get_region("Coldington").add_locations(get_location_names_with_ids(["Dr Lebut"]))
+    # Industrial zone
 
     # Locations may exist only if the player enables certain options.
     # In our case, the extra_starting_chest option adds the Bottom Left Extra Chest location.
