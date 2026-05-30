@@ -182,7 +182,7 @@ def can_complete_npc(npc: str, state: CollectionState, world: DoorSalesmanWorld)
             break
     if not can_access_area(lives, state, world):
         return False
-    for i in npc_wants:
+    for i in npc_wants[npc]:
         if has_door(i, state, world):
             return True
     return False
