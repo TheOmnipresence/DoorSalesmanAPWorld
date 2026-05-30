@@ -64,7 +64,7 @@ shop_costs = {
     "Mansion Lane shop item 1": 45,
     "Mansion Lane shop item 2": 110,
     "Mansion Lane shop item 3": 30,
-    #coldington
+    #put coldington items here
     "Industrial Zone shop item 1": 50,
     "Industrial Zone shop item 2": 190,
     "Industrial Zone shop item 3": 540,
@@ -86,7 +86,7 @@ npc_wants = {
     "Dr Lebut": ["Ice Door"],
 }
 neighborhood_populations = {
-    "Workshop": [],
+    "Warehouse": [],
     "Shrimpville": ["May", "Doug", "Mr Brown", "Liliana", "Ice Man"],
     "Fancytown": ["Poshman", "Hole Guy", "Gold"],
     "Mansion Lane": ["John Bottom", "John Top"],
@@ -99,7 +99,7 @@ def get_area_sells() -> dict:
         result[i] = []
         for npc in neighborhood_populations[i]:
             for door in npc_wants[npc]:
-                if not result[i].__contains__(door):
+                if not door in result[i]:
                     result[i].append(door)
     return result
 area_sells = get_area_sells()
@@ -115,7 +115,7 @@ def has_door(door: str, state: CollectionState, world: DoorSalesmanWorld) -> boo
 
     for i in repairs_to:
         if repairs_to[i] == door:
-            if repair_requirements.__contains__(i):
+            if i in repair_requirements:
                 if state.has_all([i] + repair_requirements[i], world.player):
                     return True
             else:
@@ -125,7 +125,7 @@ def has_door(door: str, state: CollectionState, world: DoorSalesmanWorld) -> boo
 
 
 def can_repair_door(door: str, state: CollectionState, world: DoorSalesmanWorld) -> bool:
-    if not repair_requirements.__contains__(door):
+    if not door in repair_requirements:
         return True
     return state.has_any(repair_requirements[door], world.player)
 
@@ -156,7 +156,7 @@ def can_meet_cost(cost: int, state: CollectionState, world: DoorSalesmanWorld) -
 
 
 def can_access_area(area: str, state: CollectionState, world: DoorSalesmanWorld) -> bool:
-    if ["Workshop", "Shrimpville", "Fancytown"].__contains__(area):
+    if area in ["Warehouse", "Shrimpville", "Fancytown"]:
         return True
     elif area == "Industrial Zone":
         return state.has_all(["Toolkit", "Glassworking"], world.player)
@@ -167,6 +167,8 @@ def can_access_area(area: str, state: CollectionState, world: DoorSalesmanWorld)
 def can_get_shop_item(item: str, state: CollectionState, world: DoorSalesmanWorld) -> bool:
     if not can_access_area(item.split(" shop item ")[0], state, world):
         return False
+    if not item in shop_costs:
+        return False
     if shop_costs[item] >= 90:
         return True
     return can_meet_cost(shop_costs[item], state, world)
@@ -175,7 +177,7 @@ def can_get_shop_item(item: str, state: CollectionState, world: DoorSalesmanWorl
 def can_complete_npc(npc: str, state: CollectionState, world: DoorSalesmanWorld) -> bool:
     lives = ""
     for i in neighborhood_populations:
-        if neighborhood_populations[i].__contains__(npc):
+        if npc in neighborhood_populations[i]:
             lives = i
             break
     if not can_access_area(lives, state, world):
@@ -197,13 +199,12 @@ def set_all_entrance_rules(world: DoorSalesmanWorld) -> None:
 
 
 def set_all_location_rules(world: DoorSalesmanWorld) -> None:
-
-    for i in shop_costs:
-        set_rule(world.get_location(i), lambda state: can_get_shop_item(i, state, world))
-    for i in npc_wants:
-        set_rule(world.get_location(i + " Old Door"), lambda state: can_complete_npc(i, state, world))
-    for i in unlock_npcs:
-        set_rule(world.get_location(i + " neighborhood unlock"), lambda state: can_complete_npc(unlock_npcs[i], state, world))
+    for shop_item in shop_costs:
+        set_rule(world.get_location(shop_item), lambda state, current = shop_item: can_get_shop_item(current, state, world))
+    for npc in npc_wants:
+        set_rule(world.get_location(npc + " Old Door"), lambda state, current = npc: can_complete_npc(current, state, world))
+    for unlock in unlock_npcs:
+        set_rule(world.get_location(unlock + " neighborhood unlock"), lambda state, current = unlock: can_complete_npc(unlock_npcs[current], state, world))
 
 
 def set_completion_condition(world: DoorSalesmanWorld) -> None:
