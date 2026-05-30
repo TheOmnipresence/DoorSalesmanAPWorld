@@ -10,6 +10,7 @@ if TYPE_CHECKING:
 
 
 repairs_to = {
+    "Knobless Base Door": "Base Door",
     "Scratched Door": "Plain Door",
     "Cracked Oak Door": "Oak Door",
     "Hole Oak Door": "Oak Door",
@@ -26,6 +27,40 @@ repair_requirements = {
     "Fractured Glass Door": ["Glassworking"],
     "Melted Door": ["Freezer"],
 }
+area_sells = {
+    "Workshop": [],
+    "Shrimpville": ["Base Door", "Oak Door", "Screen Door", "Scratched Door", "Plain Door", "Ewhs Door", "Blue Door", "Ice Door"],
+    "Fancytown": ["Oak Door", "Gold Oak Door"],
+    "Mansion Lane": ["Blue Door", "Mansion Door", "Glass Door"],
+    "Coldington": [],
+    "Industrial Zone": [],
+}
+## what these doors sell for
+door_prices = {
+    "Base Door": 45,
+    "Knobless Base Door": 35,
+    "Plain Door": 55,
+    "Scratched Door": 30,
+    "Oak Door": 100,
+    "Cracked Oak Door": 75,
+    "Hole Oak Door": 40,
+    "Ripped Screen Door": 5,
+    "Screen Door": 55,
+    "Ewhs Door": 115,
+    "Fractured Ewhs Door": 90,
+    "Blue Door": 90,
+    "Rough Blue Door": 70,
+    "Gold Oak Door": 250,
+    "Glass Door": 130,
+    "Fractured Glass Door": 40,
+    "Mansion Door": 110,
+    "Cracked Mansion Door": 85,
+    "Steel Door": 750,
+    "Wheelless Steel Door": 600,
+    "Ice Door": 235,
+    "Melted Door": 135,
+}
+
 
 
 def has_door(door: str, state: CollectionState, world: DoorSalesmanWorld) -> bool:
@@ -43,13 +78,47 @@ def has_door(door: str, state: CollectionState, world: DoorSalesmanWorld) -> boo
     return False
 
 
+def can_repair_door(door: str, state: CollectionState, world: DoorSalesmanWorld) -> bool:
+    if not repair_requirements.__contains__(door):
+        return True
+    return state.has_any(repair_requirements[door], world.player)
+
+
+def can_repair_all_variants(door: str, state: CollectionState, world: DoorSalesmanWorld) -> bool:
+    for i in repairs_to:
+        if repairs_to[i] == door:
+            if not can_repair_door(door, state, world):
+                return False
+    return True
+
+
+def can_meet_cost(cost: int, state: CollectionState, world: DoorSalesmanWorld) -> bool:
+    money = 0
+    for area in area_sells:
+        if not can_access_area(area, state, world):
+            continue
+        for door in area_sells[area]:
+            if has_door(door, state, world):
+                if can_repair_all_variants(door, state, world):
+                    return True
+                else:
+                    money += door_prices[door] * state.prog_items[world.player][door]
+                    if money >= cost:
+                        return True
+
+    return False
+
+
+def can_access_area(area: str, state: CollectionState, world: DoorSalesmanWorld) -> bool:
+    if ["Workshop", "Shrimpville", "Fancytown"].__contains__(area):
+        return True
+    elif area == "Industrial Zone":
+        return state.has_all(["Toolkit", "Glassworking"], world.player)
+    else:
+        return state.has(area + " neighborhood unlock", world.player)
+
 
 def set_all_rules(world: DoorSalesmanWorld) -> None:
-    # In order for AP to generate an item layout that is actually possible for the player to complete,
-    # we need to define rules for our Entrances and Locations.
-    # Note: Regions do not have rules, the Entrances connecting them do!
-    # We'll do entrances first, then locations, and then finally we set our victory condition.
-
     set_all_entrance_rules(world)
     set_all_location_rules(world)
     set_completion_condition(world)
@@ -61,6 +130,12 @@ def set_all_entrance_rules(world: DoorSalesmanWorld) -> None:
 
 def set_all_location_rules(world: DoorSalesmanWorld) -> None:
 
+    set_rule(world.get_location("Warehouse shop item 1"), lambda state: True)
+    set_rule(world.get_location("Warehouse shop item 2"), lambda state: True)
+    set_rule(world.get_location("Warehouse shop item 3"), lambda state: True)
+    set_rule(world.get_location("Shrimpville shop item 1"), lambda state: True)
+    set_rule(world.get_location("Shrimpville shop item 2"), lambda state: True)
+    set_rule(world.get_location("Shrimpville shop item 3"), lambda state: can_meet_cost(210, state, world))
 
     # Location rules work no differently from Entrance rules.
     # Most of our locations are chests that can simply be opened by walking up to them.

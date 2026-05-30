@@ -51,7 +51,7 @@ def connect_regions(world: DoorSalesmanWorld) -> None:
     regions["Workshop"].connect(regions["Fancytown"], lambda state: True)
     regions["Fancytown"].connect(regions["Mansion Lane"], lambda state: state.has("Mansion Lane neighborhood unlock", world.player)) #has_door("Gold Door", state, world))
     regions["Shrimpville"].connect(regions["Coldington"], lambda state: state.has("Coldington neighborhood unlock", world.player)) #has_door("Ice Door", state, world))
-    regions["Workshop"].connect(regions["Industrial Zone"], lambda state: state.has_all("Toolkit", "Glassworking", world.player))
+    regions["Workshop"].connect(regions["Industrial Zone"], lambda state: state.has_all(["Toolkit", "Glassworking"], world.player))
 
 
     # Some Entrances may only exist if the player enables certain options.
