@@ -27,14 +27,6 @@ repair_requirements = {
     "Fractured Glass Door": ["Glassworking"],
     "Melted Door": ["Freezer"],
 }
-area_sells = {
-    "Workshop": [],
-    "Shrimpville": ["Base Door", "Oak Door", "Screen Door", "Scratched Door", "Plain Door", "Ewhs Door", "Blue Door", "Ice Door"],
-    "Fancytown": ["Oak Door", "Gold Oak Door"],
-    "Mansion Lane": ["Blue Door", "Mansion Door", "Glass Door"],
-    "Coldington": [],
-    "Industrial Zone": [],
-}
 ## what these doors sell for
 door_prices = {
     "Base Door": 45,
@@ -60,7 +52,61 @@ door_prices = {
     "Ice Door": 235,
     "Melted Door": 135,
 }
+shop_costs = {
+    "Warehouse shop item 1": 45,
+    "Warehouse shop item 2": 20,
+    "Warehouse shop item 3": 20,
+    "Shrimpville shop item 1": 15,
+    "Shrimpville shop item 2": 90,
+    "Shrimpville shop item 3": 210,
+    "Fancytown shop item 1": 60,
+    "Fancytown shop item 2": 190,
+    "Mansion Lane shop item 1": 45,
+    "Mansion Lane shop item 2": 110,
+    "Mansion Lane shop item 3": 30,
+    #coldington
+    "Industrial Zone shop item 1": 50,
+    "Industrial Zone shop item 2": 190,
+    "Industrial Zone shop item 3": 540,
+}
+npc_wants = {
+    "May": ["Base Door", "Oak Door"],
+    "Doug": ["Base Door", "Oak Door", "Screen Door"],
+    "Mr Brown": ["Base Door", "Oak Door", "Scratched Door", "Screen Door", "Plain Door"],
+    "Liliana": ["Ewhs Door", "Blue Door"],
+    "Ice Man": ["Ice Door"],
 
+    "Poshman": ["Oak Door"],
+    "Hole Guy": ["Oak Door"],
+    "Gold": ["Gold Oak Door"],
+
+    "John Bottom": ["Blue Door", "Mansion Door"],
+    "John Top": ["Glass Door"],
+
+    "Dr Lebut": ["Ice Door"],
+}
+neighborhood_populations = {
+    "Workshop": [],
+    "Shrimpville": ["May", "Doug", "Mr Brown", "Liliana", "Ice Man"],
+    "Fancytown": ["Poshman", "Hole Guy", "Gold"],
+    "Mansion Lane": ["John Bottom", "John Top"],
+    "Coldington": ["Dr Lebut"],
+    "Industrial Zone": [],
+}
+def get_area_sells() -> dict:
+    result = {}
+    for i in neighborhood_populations:
+        result[i] = []
+        for npc in neighborhood_populations[i]:
+            for door in npc_wants[npc]:
+                if not result[i].__contains__(door):
+                    result[i].append(door)
+    return result
+area_sells = get_area_sells()
+unlock_npcs = {
+    "Mansion Lane": "Gold",
+    "Coldington": "Ice Man",
+}
 
 
 def has_door(door: str, state: CollectionState, world: DoorSalesmanWorld) -> bool:
@@ -118,6 +164,28 @@ def can_access_area(area: str, state: CollectionState, world: DoorSalesmanWorld)
         return state.has(area + " neighborhood unlock", world.player)
 
 
+def can_get_shop_item(item: str, state: CollectionState, world: DoorSalesmanWorld) -> bool:
+    if not can_access_area(item.split(" shop item ")[0], state, world):
+        return False
+    if shop_costs[item] >= 90:
+        return True
+    return can_meet_cost(shop_costs[item], state, world)
+
+
+def can_complete_npc(npc: str, state: CollectionState, world: DoorSalesmanWorld) -> bool:
+    lives = ""
+    for i in neighborhood_populations:
+        if neighborhood_populations[i].__contains__(npc):
+            lives = i
+            break
+    if not can_access_area(lives, state, world):
+        return False
+    for i in npc_wants:
+        if has_door(i, state, world):
+            return True
+    return False
+
+
 def set_all_rules(world: DoorSalesmanWorld) -> None:
     set_all_entrance_rules(world)
     set_all_location_rules(world)
@@ -130,81 +198,13 @@ def set_all_entrance_rules(world: DoorSalesmanWorld) -> None:
 
 def set_all_location_rules(world: DoorSalesmanWorld) -> None:
 
-    set_rule(world.get_location("Warehouse shop item 1"), lambda state: True)
-    set_rule(world.get_location("Warehouse shop item 2"), lambda state: True)
-    set_rule(world.get_location("Warehouse shop item 3"), lambda state: True)
-    set_rule(world.get_location("Shrimpville shop item 1"), lambda state: True)
-    set_rule(world.get_location("Shrimpville shop item 2"), lambda state: True)
-    set_rule(world.get_location("Shrimpville shop item 3"), lambda state: can_meet_cost(210, state, world))
-
-    # Location rules work no differently from Entrance rules.
-    # Most of our locations are chests that can simply be opened by walking up to them.
-    # Thus, their logical requirements are covered by the Entrance rules of the Entrances that were required to
-    # reach the region that the chest sits in.
-    # However, our two enemies work differently.
-    # Entering the room with the enemy is not enough, you also need to have enough combat items to be able to defeat it.
-    # So, we need to set requirements on the Locations themselves.
-    # Since combat is a bit more complicated, we'll use this chance to cover some advanced access rule concepts.
-
-    # Sometimes, you may want to have different rules depending on the player's chosen options.
-    # There is a wrong way to do this, and a right way to do this. Let's do the wrong way first.
-    right_room_enemy = world.get_location("Right Room Enemy Drop")
-
-    # DON'T DO THIS!!!!
-    set_rule(
-        right_room_enemy,
-        lambda state: (
-            state.has("Sword", world.player)
-            and (not world.options.hard_mode or state.has_any(("Shield", "Health Upgrade"), world.player))
-        ),
-    )
-    # DON'T DO THIS!!!!
-
-    # Now, what's actually wrong with this? It works perfectly fine, right?
-    # If hard mode disabled, Sword is enough. If hard mode is enabled, we also need a Shield or a Health Upgrade.
-    # The access rule we just wrote does this correctly, so what's the problem?
-    # The problem is performance.
-    # Most of your world code doesn't need to be perfectly performant, since it just runs once per slot.
-    # However, access rules in particular are by far the hottest code path in Archipelago.
-    # An access rule will potentially be called thousands or even millions of times over the course of one generation.
-    # As a result, access rules are the one place where it's really worth putting in some effort to optimize.
-    # What's the performance problem here?
-    # Every time our access rule is called, it has to evaluate whether world.options.hard_mode is True or False.
-    # Wouldn't it be better if in easy mode, the access rule only checked for Sword to begin with?
-    # Wouldn't it also be better if in hard mode, it already knew it had to check Shield and Health Upgrade as well?
-    # Well, we can achieve this by doing the "if world.options.hard_mode" check outside the set_rule call,
-    # and instead having two *different* set_rule calls depending on which case we're in.
-
-    if world.options.hard_mode:
-        # If you have multiple conditions, you can obviously chain them via "or" or "and".
-        # However, there are also the nice helper functions "state.has_any" and "state.has_all".
-        set_rule(
-            right_room_enemy,
-            lambda state: (
-                state.has("Sword", world.player) and state.has_any(("Shield", "Health Upgrade"), world.player)
-            ),
-        )
-    else:
-        set_rule(right_room_enemy, lambda state: state.has("Sword", world.player))
-
-    # Another way to chain multiple conditions is via the add_rule function.
-    # This makes the access rules a bit slower though, so it should only be used if your structure justifies it.
-    # In our case, it's pretty useful because hard mode and easy mode have different requirements.
-    final_boss = world.get_location("Final Boss Defeated")
-
-    # For the "known" requirements, it's still better to chain them using a normal "and" condition.
-    add_rule(final_boss, lambda state: state.has_all(("Sword", "Shield"), world.player))
-
-    if world.options.hard_mode:
-        # You can check for multiple copies of an item by using the optional count parameter of state.has().
-        add_rule(final_boss, lambda state: state.has("Health Upgrade", world.player, 2))
+    for i in shop_costs:
+        set_rule(world.get_location(i), lambda state: can_get_shop_item(i, state, world))
+    for i in npc_wants:
+        set_rule(world.get_location(i + " Old Door"), lambda state: can_complete_npc(i, state, world))
+    for i in unlock_npcs:
+        set_rule(world.get_location(i + " neighborhood unlock"), lambda state: can_complete_npc(unlock_npcs[i], state, world))
 
 
 def set_completion_condition(world: DoorSalesmanWorld) -> None:
-    # Finally, we need to set a completion condition for our world, defining what the player needs to win the game.
-    # You can just set a completion condition directly like any other condition, referencing items the player receives:
-    world.multiworld.completion_condition[world.player] = lambda state: state.has_all(("Sword", "Shield"), world.player)
-
-    # In our case, we went for the Victory event design pattern (see create_events() in locations.py).
-    # So lets undo what we just did, and instead set the completion condition to:
-    world.multiworld.completion_condition[world.player] = lambda state: state.has("Victory", world.player)
+    world.multiworld.completion_condition[world.player] = lambda state: state.has("Coldington neighborhood unlock", world.player)
