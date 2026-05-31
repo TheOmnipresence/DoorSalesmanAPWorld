@@ -27,6 +27,19 @@ repair_requirements = {
     "Fractured Glass Door": ["Glassworking"],
     "Melted Door": ["Freezer"],
 }
+repair_costs = {
+    "Knobless Base Door": 5,
+    "Scratched Door": 5,
+    "Cracked Oak Door": 10,
+    "Hole Oak Door": 20,
+    "Ripped Screen Door": 10,
+    "Fractured Ewhs Door": 15,
+    "Rough Blue Door": 10,
+    "Fractured Glass Door": 40,
+    "Cracked Mansion Door": 15,
+    "Wheelless Steel Door": 30,
+    "Melted Door": 5,
+}
 ## what these doors sell for
 door_prices = {
     "Base Door": 45,
@@ -109,18 +122,23 @@ unlock_npcs = {
 }
 
 
-def has_door(door: str, state: CollectionState, world: DoorSalesmanWorld) -> bool:
+def has_door(door: str, state: CollectionState, world: DoorSalesmanWorld, include_repairs: bool = None) -> bool:
+    if include_repairs is None:
+        include_repairs = False
+
     if state.has(door, world.player):
         return True
 
-    for i in repairs_to:
-        if repairs_to[i] == door:
-            if i in repair_requirements:
-                if state.has_all([i] + repair_requirements[i] + ["Toolkit"], world.player):
-                    return True
-            else:
-                if state.has(i, world.player):
-                    return True
+    if include_repairs:
+        for i in repairs_to:
+            if repairs_to[i] == door:
+                if i in repair_requirements:
+                    # TODO currently cost won't be consistent if this is called inside of can_meet_cost
+                    if state.has_all([i] + repair_requirements[i] + ["Toolkit"], world.player) and can_meet_cost(repair_costs[i], state, world, False):
+                        return True
+                else:
+                    if state.has(i, world.player):
+                        return True
     return False
 
 
@@ -138,13 +156,16 @@ def can_repair_all_variants(door: str, state: CollectionState, world: DoorSalesm
     return True
 
 
-def can_meet_cost(cost: int, state: CollectionState, world: DoorSalesmanWorld) -> bool:
+def can_meet_cost(cost: int, state: CollectionState, world: DoorSalesmanWorld, include_repairs: bool = None) -> bool:
+    if include_repairs is None:
+        include_repairs = True
     money = 0
     for area in area_sells:
         if not can_access_area(area, state, world):
             continue
         for door in area_sells[area]:
-            if has_door(door, state, world):
+            # TODO include has_door price here
+            if has_door(door, state, world, include_repairs):
                 if can_repair_all_variants(door, state, world):
                     return True
                 else:
