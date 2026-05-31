@@ -40,10 +40,18 @@ DOORS = [
 ITEM_NAME_TO_ID = map_to_dict(DOORS, lambda e: DOORS.index(e) + 1) | map_to_dict(NEIGHBORHOOD_UNLOCKS, lambda e: NEIGHBORHOOD_UNLOCKS.index(e) + 2000) | {
     "Day Advance": 1000,
 
-    "Toolkit": 1001,
-    "Glassworking": 1002,
-    "Welding": 1003,
-    "Freezer": 1004,
+    "Toolkit": 1100,
+    "Glassworking": 1101,
+    "Welding": 1102,
+    "Freezer": 1103,
+
+    # "Knock Power 1": 1200,
+
+    # "Warehouse Storage 2": 1300,
+
+    # "Truck Bed": 1400,
+
+    "Wheelbarrow": 1500,
 }
 
 DOOR_CLASSIFICATIONS = {
@@ -78,6 +86,8 @@ DEFAULT_ITEM_CLASSIFICATIONS = DOOR_CLASSIFICATIONS | map_to_dict(NEIGHBORHOOD_U
     "Glassworking": ItemClassification.progression,
     "Welding": ItemClassification.progression,
     "Freezer": ItemClassification.progression,
+
+    "Wheelbarrow": ItemClassification.useful,
 }
 
 all_door_items = [
