@@ -138,5 +138,5 @@ def create_all_items(world: DoorSalesmanWorld) -> None:
     itempool += [world.create_filler() for _ in range(needed_number_of_filler_items)]
     world.multiworld.itempool += itempool
 
-    for i in ["Base Door", "Base Door", "Scratched Door"]:
+    for i in ["Scratched Door", "Base Door", "Base Door"]:
         world.push_precollected(world.create_item(i))
