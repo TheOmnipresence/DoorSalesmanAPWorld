@@ -12,32 +12,32 @@ if TYPE_CHECKING:
 # Every item must have a unique integer ID associated with it.
 # We will have a lookup from item name to ID here that, in world.py, we will import and bind to the world class.
 # Even if an item doesn't exist on specific options, it must be present in this lookup.
-DOORS = {
-    "Base Door": 0,
-    "Knobless Base Door": 1,
-    "Plain Door": 2,
-    "Scratched Door": 3,
-    "Oak Door": 4,
-    "Cracked Oak Door": 5,
-    "Hole Oak Door": 6,
-    "Ripped Screen Door": 7,
-    "Screen Door": 8,
-    "Ewhs Door": 9,
-    "Fractured Ewhs Door": 10,
-    "Blue Door": 11,
-    "Rough Blue Door": 12,
-    "Gold Oak Door": 13,
-    "Glass Door": 14,
-    "Fractured Glass Door": 15,
-    "Mansion Door": 16,
-    "Cracked Mansion Door": 17,
-    "Steel Door": 18,
-    "Wheelless Steel Door": 19,
-    "Ice Door": 20,
-    "Melted Door": 21,
-}
+DOORS = [
+    "Base Door",
+    "Knobless Base Door",
+    "Plain Door",
+    "Scratched Door",
+    "Oak Door",
+    "Cracked Oak Door",
+    "Hole Oak Door",
+    "Ripped Screen Door",
+    "Screen Door",
+    "Ewhs Door",
+    "Fractured Ewhs Door",
+    "Blue Door",
+    "Rough Blue Door",
+    "Gold Oak Door",
+    "Glass Door",
+    "Fractured Glass Door",
+    "Mansion Door",
+    "Cracked Mansion Door",
+    "Steel Door",
+    "Wheelless Steel Door",
+    "Ice Door",
+    "Melted Door",
+]
 
-ITEM_NAME_TO_ID = DOORS | map_to_dict(NEIGHBORHOOD_UNLOCKS, lambda e: NEIGHBORHOOD_UNLOCKS.index(e) + 2000) | {
+ITEM_NAME_TO_ID = map_to_dict(DOORS, lambda e: DOORS.index(e) + 1) | map_to_dict(NEIGHBORHOOD_UNLOCKS, lambda e: NEIGHBORHOOD_UNLOCKS.index(e) + 2000) | {
     "Day Advance": 1000,
 
     "Toolkit": 1001,

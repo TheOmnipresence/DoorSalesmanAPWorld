@@ -116,7 +116,7 @@ def has_door(door: str, state: CollectionState, world: DoorSalesmanWorld) -> boo
     for i in repairs_to:
         if repairs_to[i] == door:
             if i in repair_requirements:
-                if state.has_all([i] + repair_requirements[i], world.player):
+                if state.has_all([i] + repair_requirements[i] + ["Toolkit"], world.player):
                     return True
             else:
                 if state.has(i, world.player):
@@ -127,7 +127,7 @@ def has_door(door: str, state: CollectionState, world: DoorSalesmanWorld) -> boo
 def can_repair_door(door: str, state: CollectionState, world: DoorSalesmanWorld) -> bool:
     if not door in repair_requirements:
         return True
-    return state.has_any(repair_requirements[door], world.player)
+    return state.has_all(repair_requirements[door] + ["Toolkit"], world.player)
 
 
 def can_repair_all_variants(door: str, state: CollectionState, world: DoorSalesmanWorld) -> bool:
