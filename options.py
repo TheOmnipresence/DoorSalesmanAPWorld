@@ -12,12 +12,14 @@ class DeathLink(Toggle):
     default = False
 
 
-class DeathLinkAmnesty(Toggle):
+class DeathLinkAmnesty(Range):
     """
     The amount of bankrupts needed to send a deathlink.
     """
 
     display_name = "Deathlink Amnesty"
+    range_start = 1
+    range_end = 20
     default = 1
 
 

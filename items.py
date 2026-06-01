@@ -129,6 +129,7 @@ def get_random_filler_item_name(world: DoorSalesmanWorld) -> str:
     # DO NOT use a bare random object from Python's built-in random module.
     # if world.random.randint(0, 99) < world.options.trap_chance:
     #     return "Math Trap"
+    # TODO rent trap
     return "Day Advance"
 
 
