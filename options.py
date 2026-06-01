@@ -3,20 +3,41 @@ from dataclasses import dataclass
 from Options import Choice, OptionGroup, PerGameCommonOptions, Range, Toggle
 
 
+class DeathLink(Toggle):
+    """
+    Toggles deathlink for this player. The deathlink trigger for this game is when you go bankrupt.
+    """
+
+    display_name = "Deathlink"
+    default = False
+
+
+class DeathLinkAmnesty(Toggle):
+    """
+    The amount of bankrupts needed to send a deathlink.
+    """
+
+    display_name = "Deathlink Amnesty"
+    default = 1
+
+
 @dataclass
 class DoorSalesmanOptions(PerGameCommonOptions):
-    pass
-    # hard_mode: HardMode
-    # hammer: Hammer
-    # extra_starting_chest: ExtraStartingChest
-    # start_with_one_confetti_cannon: StartWithOneConfettiCannon
-    # trap_chance: TrapChance
-    # confetti_explosiveness: ConfettiExplosiveness
-    # player_sprite: PlayerSprite
+    death_link: DeathLink
+    death_link_amnesty: DeathLinkAmnesty
 
 
 # If we want to group our options by similar type, we can do so as well. This looks nice on the website.
 option_groups = []
 
 # Finally, we can define some option presets if we want the player to be able to quickly choose a specific "mode".
-option_presets = {}
+option_presets = {
+    "default": {
+        "death_link": False,
+        "death_link_amnesty": 1,
+    },
+    "deathlink": {
+        "death_link": True,
+        "death_link_amnesty": 1,
+    }
+}
