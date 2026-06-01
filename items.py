@@ -47,7 +47,7 @@ ITEM_NAME_TO_ID = map_to_dict(DOORS, lambda e: DOORS.index(e) + 1) | map_to_dict
 
     # "Knock Power 1": 1200,
 
-    # "Warehouse Storage 2": 1300,
+    "Warehouse Storage 2": 1300,
 
     # "Truck Bed": 1400,
 
@@ -86,6 +86,8 @@ DEFAULT_ITEM_CLASSIFICATIONS = DOOR_CLASSIFICATIONS | map_to_dict(NEIGHBORHOOD_U
     "Glassworking": ItemClassification.progression,
     "Welding": ItemClassification.progression,
     "Freezer": ItemClassification.progression,
+
+    "Warehouse Storage 2": ItemClassification.useful,
 
     "Wheelbarrow": ItemClassification.useful,
 }
