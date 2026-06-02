@@ -64,6 +64,7 @@ door_prices = {
     "Wheelless Steel Door": 600,
     "Ice Door": 235,
     "Melted Door": 135,
+    "Brick Door": 165,
 }
 shop_costs = {
     "Warehouse shop item 1": 45,
@@ -81,6 +82,8 @@ shop_costs = {
     "Industrial Zone shop item 1": 50,
     "Industrial Zone shop item 2": 190,
     "Industrial Zone shop item 3": 540,
+    "Industrial Zone shop item 4": 140,
+    "Industrial Zone shop item 5": 400,
 }
 npc_wants = {
     "May": ["Base Door", "Oak Door"],

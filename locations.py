@@ -34,6 +34,7 @@ SHOP_LOCATIONS = [
     "Industrial Zone shop item 2",
     "Industrial Zone shop item 3",
     "Industrial Zone shop item 4",
+    "Industrial Zone shop item 5",
 ]
 OLD_DOORS = [
     "May Old Door",

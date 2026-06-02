@@ -35,6 +35,7 @@ DOORS = [
     "Wheelless Steel Door",
     "Ice Door",
     "Melted Door",
+    "Brick Door",
 ]
 
 ITEM_NAME_TO_ID = map_to_dict(DOORS, lambda e: DOORS.index(e) + 1) | map_to_dict(NEIGHBORHOOD_UNLOCKS, lambda e: NEIGHBORHOOD_UNLOCKS.index(e) + 2000) | {
@@ -77,6 +78,7 @@ DOOR_CLASSIFICATIONS = {
     "Wheelless Steel Door": ItemClassification.progression_deprioritized_skip_balancing,
     "Ice Door": ItemClassification.progression,
     "Melted Door": ItemClassification.progression_deprioritized_skip_balancing,
+    "Brick Door": ItemClassification.progression,
 }
 
 DEFAULT_ITEM_CLASSIFICATIONS = DOOR_CLASSIFICATIONS | map_to_dict(NEIGHBORHOOD_UNLOCKS, lambda e: ItemClassification.progression) | {
@@ -102,6 +104,7 @@ all_door_items = [
     "Ice Door",
     "Glass Door",
     "Wheelless Steel Door",
+    "Brick Door",
 
     #old doors
     "Scratched Door",
