@@ -29,7 +29,7 @@ SHOP_LOCATIONS = [
     "Mansion Lane shop item 1",
     "Mansion Lane shop item 2",
     "Mansion Lane shop item 3",
-    #coldington
+    "Coldington shop item 1",
     "Industrial Zone shop item 1",
     "Industrial Zone shop item 2",
     "Industrial Zone shop item 3",

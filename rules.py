@@ -78,7 +78,7 @@ shop_costs = {
     "Mansion Lane shop item 1": 45,
     "Mansion Lane shop item 2": 110,
     "Mansion Lane shop item 3": 30,
-    #put coldington items here
+    "Coldington shop item 1": 800,
     "Industrial Zone shop item 1": 50,
     "Industrial Zone shop item 2": 190,
     "Industrial Zone shop item 3": 540,
