@@ -27,21 +27,8 @@ def create_all_regions(world: DoorSalesmanWorld) -> None:
     for i in neighborhoods:
         world.multiworld.regions.append(Region(i, world.player, world.multiworld))
 
-    # Some regions may only exist if the player enables certain options.
-    # In our case, the Hammer locks the top middle chest in its own room if the hammer option is enabled.
-    # if world.options.hammer:
-    #     top_middle_room = Region("Top Middle Room", world.player, world.multiworld)
-    #     regions.append(top_middle_room)
-
-    # We now need to add these regions to multiworld.regions so that AP knows about their existence.
-    # world.multiworld.regions += regions
-
 
 def connect_regions(world: DoorSalesmanWorld) -> None:
-    # We have regions now, but still need to connect them to each other.
-    # But wait, we no longer have access to the region variables we created in create_all_regions()!
-    # Luckily, once you've submitted your regions to multiworld.regions,
-    # you can get them at any time using world.get_region(...).
     regions = {}
     for i in neighborhoods:
         regions[i] = world.get_region(i)

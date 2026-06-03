@@ -29,10 +29,8 @@ class DoorSalesmanOptions(PerGameCommonOptions):
     death_link_amnesty: DeathLinkAmnesty
 
 
-# If we want to group our options by similar type, we can do so as well. This looks nice on the website.
 option_groups = []
 
-# Finally, we can define some option presets if we want the player to be able to quickly choose a specific "mode".
 option_presets = {
     "default": {
         "death_link": False,

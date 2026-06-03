@@ -1,10 +1,8 @@
 from collections.abc import Mapping
 from typing import Any
 
-# Imports of base Archipelago modules must be absolute.
 from worlds.AutoWorld import World
 
-# Imports of your world's files must be relative.
 from . import items, locations, regions, rules, web_world
 from . import options as door_salesman_options
 
@@ -49,7 +47,6 @@ class DoorSalesmanWorld(World):
 
 
     def fill_slot_data(self) -> Mapping[str, Any]:
-        # If you need access to the player's chosen options on the client side, there is a helper for that.
         return self.options.as_dict(
             "death_link", "death_link_amnesty",
         )
