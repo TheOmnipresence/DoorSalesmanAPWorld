@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, Callable
 
 from BaseClasses import ItemClassification, Location
 
-from . import items
+from .rules import neighborhood_populations, unlock_npcs
 
 if TYPE_CHECKING:
     from .world import DoorSalesmanWorld
@@ -42,12 +42,17 @@ OLD_DOORS = [
     "Mr Brown Old Door",
     "Liliana Old Door",
     "Ice Man Old Door",
+
     "Poshman Old Door",
     "Hole Guy Old Door",
     "Gold Old Door",
+
     "John Bottom Old Door",
     "John Top Old Door",
+
     "Dr Lebut Old Door",
+
+    "Jeff Old Door",
 ]
 NEIGHBORHOOD_UNLOCKS = [
     "Mansion Lane neighborhood unlock",
@@ -57,8 +62,6 @@ NEIGHBORHOOD_UNLOCKS = [
 LOCATION_NAME_TO_ID = map_to_dict(SHOP_LOCATIONS, lambda e: SHOP_LOCATIONS.index(e) + 1) | map_to_dict(OLD_DOORS, lambda e: OLD_DOORS.index(e) + 1000) | map_to_dict(NEIGHBORHOOD_UNLOCKS, lambda e: NEIGHBORHOOD_UNLOCKS.index(e) + 2000)
 
 
-# Each Location instance must correctly report the "game" it belongs to.
-# To make this simple, it is common practice to subclass the basic Location class and override the "game" field.
 class DoorSalesmanLocation(Location):
     game = "Door to Door Door Salesman"
 
@@ -77,11 +80,12 @@ def create_regular_locations(world: DoorSalesmanWorld) -> None:
         region = world.get_region(i.split(" shop item ")[0])
         region.locations.append(DoorSalesmanLocation(world.player, i, LOCATION_NAME_TO_ID[i], region))
 
-    world.get_region("Shrimpville").add_locations(get_location_names_with_ids(["May Old Door", "Doug Old Door", "Mr Brown Old Door", "Liliana Old Door", "Ice Man Old Door"] + ["Coldington neighborhood unlock"]))
-    world.get_region("Fancytown").add_locations(get_location_names_with_ids(["Poshman Old Door", "Hole Guy Old Door", "Gold Old Door"] + ["Mansion Lane neighborhood unlock"]))
-    world.get_region("Mansion Lane").add_locations(get_location_names_with_ids(["John Bottom Old Door", "John Top Old Door"]))
-    world.get_region("Coldington").add_locations(get_location_names_with_ids(["Dr Lebut Old Door"]))
-    # Industrial zone
+    for i in neighborhood_populations:
+        unlocks = []
+        for neighborhood in unlock_npcs:
+            if unlock_npcs[neighborhood] in neighborhood_populations[i]:
+                unlocks.append(neighborhood + " neighborhood unlock")
+        world.get_region(i).add_locations(get_location_names_with_ids(list(map(lambda e: e + " Old Door", neighborhood_populations[i])) + unlocks))
 
     # Locations may exist only if the player enables certain options.
     # In our case, the extra_starting_chest option adds the Bottom Left Extra Chest location.

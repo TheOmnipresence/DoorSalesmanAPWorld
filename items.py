@@ -123,6 +123,8 @@ all_door_items = [
     "Fractured Glass Door",
 
     "Melted Door",
+
+    "Base Door",
 ]
 
 

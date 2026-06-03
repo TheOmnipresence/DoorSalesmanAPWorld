@@ -100,6 +100,8 @@ npc_wants = {
     "John Top": ["Glass Door"],
 
     "Dr Lebut": ["Ice Door"],
+
+    "Jeff": ["Steel Door"],
 }
 neighborhood_populations = {
     "Warehouse": [],
@@ -107,7 +109,7 @@ neighborhood_populations = {
     "Fancytown": ["Poshman", "Hole Guy", "Gold"],
     "Mansion Lane": ["John Bottom", "John Top"],
     "Coldington": ["Dr Lebut"],
-    "Industrial Zone": [],
+    "Industrial Zone": ["Jeff"],
 }
 def get_area_sells() -> dict:
     result = {}
