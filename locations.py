@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, Callable
 
 from BaseClasses import ItemClassification, Location
 
-from .rules import neighborhood_populations, unlock_npcs
+from .rules import neighborhood_populations, unlock_npcs, npc_wants
 
 if TYPE_CHECKING:
     from .world import DoorSalesmanWorld
@@ -36,24 +36,12 @@ SHOP_LOCATIONS = [
     "Industrial Zone shop item 4",
     "Industrial Zone shop item 5",
 ]
-OLD_DOORS = [
-    "May Old Door",
-    "Doug Old Door",
-    "Mr Brown Old Door",
-    "Liliana Old Door",
-    "Ice Man Old Door",
-
-    "Poshman Old Door",
-    "Hole Guy Old Door",
-    "Gold Old Door",
-
-    "John Bottom Old Door",
-    "John Top Old Door",
-
-    "Dr Lebut Old Door",
-
-    "Jeff Old Door",
-]
+def old_doors() -> list:
+    result = []
+    for i in npc_wants:
+        result.append(i + " Old Door")
+    return result
+OLD_DOORS = old_doors()
 NEIGHBORHOOD_UNLOCKS = [
     "Mansion Lane neighborhood unlock",
     "Coldington neighborhood unlock",
