@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from BaseClasses import CollectionState
-from worlds.generic.Rules import add_rule, set_rule
+from worlds.generic.Rules import set_rule
 
 if TYPE_CHECKING:
     from .world import DoorSalesmanWorld
@@ -111,6 +111,7 @@ neighborhood_populations = {
     "Mansion Lane": ["John Bottom", "John Top"],
     "Coldington": ["Dr Lebut", "Soccer Player"],
     "Industrial Zone": ["Jeff"],
+    "Junk Pit": [],
 }
 def get_area_sells() -> dict:
     result = {}
@@ -125,6 +126,16 @@ area_sells = get_area_sells()
 unlock_npcs = {
     "Mansion Lane": "Gold",
     "Coldington": "Ice Man",
+    "Junk Pit": "Soccer Player",
+}
+NEIGHBORHOOD_CONNECTIONS = {
+    "Warehouse": ["Shrimpville", "Fancytown", "Industrial Zone"],
+    "Shrimpville": ["Coldington"],
+    "Fancytown": ["Mansion Lane"],
+    "Mansion Lane": [],
+    "Coldington": [],
+    "Industrial Zone": ["Junk Pit"],
+    "Junk Pit": [],
 }
 
 
@@ -188,7 +199,10 @@ def can_access_area(area: str, state: CollectionState, world: DoorSalesmanWorld)
     elif area == "Industrial Zone":
         return state.has_all(["Toolkit", "Glassworking"], world.player)
     else:
-        return state.has(area + " neighborhood unlock", world.player)
+        for i in NEIGHBORHOOD_CONNECTIONS:
+            if area in NEIGHBORHOOD_CONNECTIONS[i]:
+                return can_access_area(i, state, world) and state.has(area + " neighborhood unlock", world.player)
+    return False
 
 
 def can_get_shop_item(item: str, state: CollectionState, world: DoorSalesmanWorld) -> bool:

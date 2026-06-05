@@ -45,6 +45,7 @@ OLD_DOORS = old_doors()
 NEIGHBORHOOD_UNLOCKS = [
     "Mansion Lane neighborhood unlock",
     "Coldington neighborhood unlock",
+    "Junk Pit neighborhood unock",
 ]
 
 LOCATION_NAME_TO_ID = map_to_dict(SHOP_LOCATIONS, lambda e: SHOP_LOCATIONS.index(e) + 1) | map_to_dict(OLD_DOORS, lambda e: OLD_DOORS.index(e) + 1000) | map_to_dict(NEIGHBORHOOD_UNLOCKS, lambda e: NEIGHBORHOOD_UNLOCKS.index(e) + 2000)
