@@ -9,7 +9,7 @@ from . import options as door_salesman_options
 
 class DoorSalesmanWorld(World):
     """
-    Door to Door Door Salesman is an economy-based business rougelite about selling people doors.
+    Door to Door Door Salesman is an economy-based business roguelite about selling people doors.
     """
 
     game = "Door to Door Door Salesman"
