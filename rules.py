@@ -25,6 +25,7 @@ repairs_to = {
 repair_requirements = {
     "Fractured Ewhs Door": ["Glassworking"],
     "Fractured Glass Door": ["Glassworking"],
+    "Wheelless Steel Door": ["Welding"],
     "Melted Door": ["Freezer"],
 }
 repair_costs = {
@@ -224,7 +225,7 @@ def can_complete_npc(npc: str, state: CollectionState, world: DoorSalesmanWorld)
     if not can_access_area(lives, state, world):
         return False
     for i in npc_wants[npc]:
-        if has_door(i, state, world):
+        if has_door(i, state, world, True):
             return True
     return False
 

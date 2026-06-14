@@ -15,6 +15,7 @@ neighborhoods = [
     "Mansion Lane",
     "Coldington",
     "Industrial Zone",
+    "Junk Pit",
 ]
 
 
