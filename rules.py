@@ -250,4 +250,11 @@ def set_all_location_rules(world: DoorSalesmanWorld) -> None:
 
 
 def set_completion_condition(world: DoorSalesmanWorld) -> None:
-    world.multiworld.completion_condition[world.player] = lambda state: state.has("Coldington neighborhood unlock", world.player)
+    world.multiworld.completion_condition[world.player] = lambda state: can_reach_all_shops(state, world)
+
+
+def can_reach_all_shops(state, world: DoorSalesmanWorld) -> bool:
+    for shop_item in shop_costs:
+        if not can_get_shop_item(shop_item, state, world):
+            return False
+    return True
