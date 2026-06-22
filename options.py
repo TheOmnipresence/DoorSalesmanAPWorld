@@ -23,10 +23,20 @@ class DeathLinkAmnesty(Range):
     default = 1
 
 
+class KeepSpellingErrors(Toggle):
+    """
+    Whether the client should keep the spelling errors from the original build.
+    """
+
+    display_name = "Keep Spelling Errors"
+    default = False
+
+
 @dataclass
 class DoorSalesmanOptions(PerGameCommonOptions):
     death_link: DeathLink
     death_link_amnesty: DeathLinkAmnesty
+    keep_spelling_errors: KeepSpellingErrors
 
 
 option_groups = []
@@ -35,9 +45,11 @@ option_presets = {
     "default": {
         "death_link": False,
         "death_link_amnesty": 1,
+        "keep_spelling_errors": False,
     },
     "deathlink": {
         "death_link": True,
         "death_link_amnesty": 1,
+        "keep_spelling_errors": False,
     }
 }
